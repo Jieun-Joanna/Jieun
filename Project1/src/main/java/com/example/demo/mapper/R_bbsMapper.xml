@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.R_bbsMapper">
+  
+	<insert id="insertBbs" parameterType="com.example.demo.vo.R_bbsVO">
+		INSERT INTO r_bbs VALUES(NULL, #{title}, #{author}, NOW(), 0, #{content})
+	</insert>
+	
+	<insert id="insertAndGetKey" useGeneratedKeys="true" keyProperty="num" parameterType="com.example.demo.vo.R_bbsVO">
+		INSERT INTO r_bbs VALUES(NULL, #{title}, #{author}, NOW(), 0, #{content})
+	</insert>
+
+	<insert id="insertImgInfo" parameterType="com.example.demo.vo.R_ImgInfoVO">
+		INSERT INTO r_imgPath VALUES(NULL, #{bnum}, #{filename}, #{filesize})
+	</insert>
+
+	<select id="getBbsList" resultType="com.example.demo.vo.R_bbsVO">
+		SELECT num, title, author, wdate, hitcount FROM r_bbs ORDER BY num DESC
+	</select>
+
+	<select id="findWithoutNum" resultType="com.example.demo.vo.R_bbsVO" parameterType="String">
+		SELECT * FROM r_bbs
+		WHERE title like concat('%',#{search},'%') OR author like concat('%',#{search},'%') OR content like concat('%',#{search},'%')
+		ORDER BY num DESC
+	</select>
+
+	<select id="getBbsImg" resultType="com.example.demo.vo.R_bbsDetailVO" parameterType="Integer">
+		SELECT num, title, author, wdate, hitcount, content, filename FROM r_bbs INNER JOIN r_imgPath ON num=bnum WHERE num=#{num}
+	</select>
+
+	<select id="getBbsDetail" resultType="com.example.demo.vo.R_bbsVO" parameterType="Integer">
+		SELECT * FROM r_bbs WHERE num=#{num}
+	</select>
+
+	<update id="updateTitle" parameterType="Integer">
+		UPDATE r_bbs SET title = concat(title, "(거래완료)") WHERE num =#{num}
+	</update>
+
+	<update id="updateBbs" parameterType="com.example.demo.vo.R_bbsVO">
+		UPDATE r_bbs SET title = #{title}, content = #{content} WHERE num = #{num}
+	</update>
+
+	<delete id="deleteBbs" parameterType="Integer">
+		DELETE FROM r_bbs WHERE num=#{num}
+	</delete>
+	
+	<update id="addHitCnt" parameterType="Integer">
+		UPDATE r_bbs SET hitcount = hitcount+1 WHERE num = #{num}
+	</update>
+
+	<insert id="addToInterest" parameterType="com.example.demo.vo.R_bbsIntVO">
+		INSERT INTO r_interest VALUES(NULL, #{uid}, #{num})
+	</insert>
+
+	<select id="getIntList" resultType="com.example.demo.vo.R_InterestVO" parameterType="String">
+		SELECT lnum, ii.uid, ii.num, title, author, wdate, hitcount, content
+		FROM r_interest ii INNER JOIN r_user uu ON uu.uid = ii.uid
+		INNER JOIN r_bbs bb ON bb.num = ii.num
+		WHERE ii.uid=#{uid}
+	</select>
+
+	<delete id="deleteInt" parameterType="Integer">
+		DELETE FROM r_interest WHERE lnum=#{lnum}
+	</delete>
+
+	<delete id="delIntAll" parameterType="String">
+		DELETE FROM r_interest WHERE uid=#{uid}
+	</delete>
+</mapper>

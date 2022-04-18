@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.R_UserMapper">
+	
+	<insert id="insertUser" parameterType="com.example.demo.vo.R_UserVO">
+		INSERT INTO r_user VALUES(#{uid}, #{pwd}, #{name}, #{phone}, #{email})
+	</insert>
+
+	<select id="idCheck" resultType="int" parameterType="String">
+		SELECT COUNT(*) FROM r_user WHERE uid = #{uid}
+	</select>
+
+	<insert id="addAndGetKey" useGeneratedKeys="true" keyProperty="uid" parameterType="com.example.demo.vo.R_UserVO">
+		INSERT INTO r_user VALUES(#{uid}, #{pwd}, #{name}, #{phone}, #{email})
+	</insert>
+
+	<select id="loginByIdPwd" resultType="com.example.demo.vo.R_UserVO" parameterType="com.example.demo.vo.R_UserVO">
+		SELECT * FROM r_user WHERE uid = #{uid} AND pwd = #{pwd}
+	</select>
+
+	<select id="getUserById" resultType="com.example.demo.vo.R_UserVO" parameterType="String">
+		SELECT * FROM r_user WHERE uid = #{uid}
+	</select>
+
+	<select id="getUserList" resultType="com.example.demo.vo.R_UserVO">
+		SELECT * FROM r_user
+	</select>
+
+	<update id="updateUser" parameterType="com.example.demo.vo.R_UserVO">
+		UPDATE r_user SET name = #{name}, phone = #{phone}, email = #{email} WHERE uid = #{uid}
+	</update>
+
+	<update id="updatePwd" parameterType="com.example.demo.vo.R_UserVO">
+		UPDATE r_user SET pwd=#{pwd} WHERE uid=#{uid}
+	</update>
+
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM r_user WHERE uid=#{uid}
+	</delete>
+	
+</mapper>
